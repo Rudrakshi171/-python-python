@@ -1,0 +1,64 @@
+import random
+
+# Create a board
+def create_board():
+    return [['-' for _ in range(3)] for _ in range(3)]
+
+# Check if the board is filled
+def is_board_filled(board):
+    return all(cell != '-' for row in board for cell in row)
+
+# Check for a win
+def check_win(board, player):
+    # Check rows, columns and diagonals
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+    for col in range(3):
+        if all(row[col] == player for row in board):
+            return True
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2-i] == player for i in range(3)):
+        return True
+    return False
+
+# Show the board
+def show_board(board):
+    for row in board:
+        print(' '.join(row))
+    print()
+
+# Main game function
+def play_game():
+    board = create_board()
+    players = ['X', 'O']
+    current_player = random.choice(players)
+
+    while True:
+        show_board(board)
+        print(f"Player {current_player}'s turn")
+        
+        try:
+            row = int(input("Enter row (0, 1, 2): "))
+            col = int(input("Enter column (0, 1, 2): "))
+            if row not in [0, 1, 2] or col not in [0, 1, 2]:
+                print("Invalid input! Please enter row and column numbers between 0 and 2.")
+                continue
+        except ValueError:
+            print("Invalid input! Please enter numeric values for row and column.")
+            continue
+
+        if board[row][col] == '-':
+            board[row][col] = current_player
+            if check_win(board, current_player):
+                show_board(board)
+                print(f"Player {current_player} wins!")
+                break
+            elif is_board_filled(board):
+                show_board(board)
+                print("It's a draw!")
+                break
+            current_player = 'X' if current_player == 'O' else 'O'
+        else:
+            print("Cell is already filled! Try again.")
+
+play_game()
